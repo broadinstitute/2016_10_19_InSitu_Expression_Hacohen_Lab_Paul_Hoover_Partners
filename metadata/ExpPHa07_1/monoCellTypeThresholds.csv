@@ -1,9 +1,11 @@
-﻿"# There are a lot more categories this time so we're going to try the classifications using >= and < for now. We could also use some sort of weighted average, where the bin in each channel is accounted or in a final classification of each cell. Myeloid_all has only one filter because it can and should have overlapping channel signal from the other three channels.",,,,
+﻿"for myeloid_all, the only filter will be on the 520 channel (ie no filter applied to the remaining channels). For myeloid_other, the filter will be 520 >= 3 and the rest of the channels = 0",,,,
 520-CSF1R,570-RNASE1,620-CD300E,690-CD36,Cell-Type
->=3,<2,<2,<2,myeloid_CM0_subtype
-<2,>=3,<2,<2,myeloid_CM4_subtype
-none,none,>=3,none,myeloid_all
-<2,<2,<2,>=3,myeloid_CM1_subtype
+>2,NA,NA,NA,myeloid_all
+>2,<2,>2,<2,myeloid_CM0_subtype
+>2,<2,>2,>2,myeloid_CM1_subtype
+>2,>2,<2,<2,myeloid_CM4_subtype
+>2,<2,<2,<2,myeloid_other
+,,,,
 Filters:,,,,
 All CMs:,,,,
 Level 1: 620+,,,,
