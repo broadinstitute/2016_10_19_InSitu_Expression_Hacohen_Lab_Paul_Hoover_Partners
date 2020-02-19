@@ -1,0 +1,5 @@
+﻿channel,maker_gene,cell_type,,CM0,CM1,CM4,All
+520,CSF1R,myeloid_all,,and +,and +,and +,and +
+570,RNASE1,myeloid_CM4_subtype,,and -,and -,and +,or +
+620,CD300E,myeloid_CM0andCM1_subtype,,and +,and +,and -,or +
+690,CD36,myeloid_CM1_subtype,,and -,and +,and -,or +
