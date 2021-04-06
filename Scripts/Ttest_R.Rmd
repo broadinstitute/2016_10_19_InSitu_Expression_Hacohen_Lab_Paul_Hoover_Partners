@@ -1,0 +1,139 @@
+---
+title: "My Document"
+output:
+  html_document:
+    fig_width: 6
+    fig_height: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(magrittr)
+library(ggplot2)
+library(cytominer)
+library(caret)
+library(matrixStats)
+library(wesanderson)
+library(ggpubr)
+library(ggsignif)
+
+```
+
+# Importing Combined_drug_target Dataset
+
+```{r}
+# Path of combined data
+
+path<- "/Users/habbasi/Documents/Broad/Broad_collaborative_projects\ /Assay_Dev_projects/Tissue_projects/2016_10_19_InSitu_Expression_Hacohen_Lab_Paul_Hoover_Partners/Scripts/dataforR/Myeloid_subtypes_proportion.csv"
+```
+
+
+```{r}
+figpath <- "/Users/habbasi/Documents/Broad/Broad_collaborative_projects\ /Assay_Dev_projects/Tissue_projects/2016_10_19_InSitu_Expression_Hacohen_Lab_Paul_Hoover_Partners/Figures/ExpPHa07_ExpPHa08/"
+```
+
+
+```{r}
+subchunkify <- function(g, fig_height=7, fig_width=5) {
+  g_deparsed <- paste0(deparse(
+    function() {g}
+  ), collapse = '')
+  
+  sub_chunk <- paste0("
+  `","``{r sub_chunk_", floor(runif(1) * 10000), ", fig.height=", fig_height, ", fig.width=", fig_width, ", echo=FALSE}",
+  "\n(", 
+    g_deparsed
+    , ")()",
+  "\n`","``
+  ")
+  
+  cat(knitr::knit(text = knitr::knit_expand(text = sub_chunk), quiet = TRUE))
+}
+
+```
+
+
+# Mahalanobis Distance Calculated using Normalized features
+# Importing normalized data
+
+```{r}
+
+data <- data.frame(readr::read_csv(path), stringsAsFactors = F)
+head(data)
+var <- c("Cell_types", "Proportion", "Tissue_Region","Patient_ID")
+```
+
+```{r}
+# Perform a t-test between groups
+
+
+glom <- data %>% filter(Tissue_Region == "Glomerulus")
+
+
+extglom <- data %>% filter(Tissue_Region == "Extra-Glomerulus")
+
+# 
+# group_by(glom, Cell_types) %>%
+#   summarise(
+#     count = n(),
+#     median = median(Proportion, na.rm = TRUE),
+#     IQR = IQR(Proportion, na.rm = TRUE)
+#   )
+# 
+
+
+# 
+my_comparisons <- list( c("CM0", "CM1"), c("CM0", "CM4"), c("CM1", "CM4") )
+ p <- ggboxplot(glom, x = "Cell_types", y = "Proportion",
+                color = "Cell_types", palette =c("#00AFBB", "#E7B800", "#FC4E07"),
+                add = "jitter", shape = "Cell_types", width=0.4) + stat_compare_means(comparisons = my_comparisons, method = "t.test") + xlab("Myleoid Cell Subtypes \n \n Glomerulus") + ylab("Frequency")
+
+ subchunkify(p, 3, 3)
+
+p
+
+#ggsave(filename="Myeloid_subtypes_patient_comparison_glomerulus.png", plot = p, path = figpath)
+
+
+
+
+
+# my_comparisons <- list( c("CM0", "CM1"), c("CM0", "CM4"), c("CM1", "CM4") )
+#  g <- ggboxplot(extglom, x = "Cell_types", y = "Proportion",
+#                 color = "Cell_types", palette =c("#00AFBB", "#E7B800", "#FC4E07"),
+#                 add = "jitter", shape = "Cell_types", width=0.4) + stat_compare_means(comparisons = my_comparisons, method = "t.test") + xlab("Myleoid Cell Subtypes \n \n Extra-Glomerulus") + ylab("Frequency")
+# 
+#  g
+
+ 
+# ggsave(filename="Myeloid_subtypes_patient_comparison_Extraglom.png", plot = g, path = figpath)
+```
+
+
+```{r}
+path<- "/Users/habbasi/Documents/Broad/Broad_collaborative_projects\ /Assay_Dev_projects/Tissue_projects/2016_10_19_InSitu_Expression_Hacohen_Lab_Paul_Hoover_Partners/Scripts/dataforR/myleoid_nonmyeloid_comparison.csv"
+figpath <- "/Users/habbasi/Documents/Broad/Broad_collaborative_projects\ /Assay_Dev_projects/Tissue_projects/2016_10_19_InSitu_Expression_Hacohen_Lab_Paul_Hoover_Partners/Figures/ExpPHa07_ExpPHa08/"
+```
+
+
+```{r}
+df <- data.frame(readr::read_csv(path), stringsAsFactors = F)
+
+my_comparisons <- list( c("Non-Myeloid Cells", "Myeloid Cells"))
+ p <- ggboxplot(df, x = "Cell_types", y = "Proportion",
+                color = "Cell_types", palette =c("#00AFBB", "#E7B800"),
+                add = "jitter", shape = "Cell_types", width = 0.5) + stat_compare_means(comparisons = my_comparisons, method = "t.test") + xlab("Cell Subtypes") + ylab("Frequency")
+ 
+ggsave(filename="Myeloid_celltypes_patient_comparison.png", plot = p, path = figpath)
+   
+
+p
+
+```
+

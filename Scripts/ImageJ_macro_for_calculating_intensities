@@ -1,0 +1,28 @@
+path="/Users/habbasi/Desktop/Negative_Control_ROIs/";
+out = "/Users/habbasi/Desktop/test_output/";"
+list = getFileList(path);
+length = list.length;
+
+for (i=0; i<length; i++) {
+   n=i+1;
+   image_path=path+list[i];
+   open(image_path);
+   open("/Users/habbasi/Desktop/Negative_Control_ROIs/ExpPHa08_1a_AB-9_BS07W36543_a_C0.tif");
+   run("Duplicate...", " ");
+   setAutoThreshold("RenyiEntropy dark no-reset");
+   //run("Threshold...");
+   setOption("BlackBackground", true);
+   run("Convert to Mask");
+   run("Analyze Particles...", "  show=Outlines include add");
+   close();
+   close();
+   roiManager("Measure");
+
+   n=list[i];
+   name = replace(n, ".tif", "");  
+   outname = name+"_Results";
+   saveAs("Results", out + outname + ".csv"); 
+   run("Close");
+   run("Close");
+
+};
